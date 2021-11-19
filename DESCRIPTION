@@ -1,0 +1,12 @@
+Package: mapirosa
+Title: Access OS Open Data APIs From R
+Version: 0.0.1
+Authors@R: 
+    person("Fran", "Barton", , "fbarton@alwaysdata.net", role = c("aut", "cre"))
+Description: A package to enable accessing basemap tiles from the OS Maps API, initially
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Imports: 
+    magrittr
