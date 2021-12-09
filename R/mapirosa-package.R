@@ -3,5 +3,8 @@
 
 ## usethis namespace: start
 #' @importFrom magrittr %>%
+#' @importFrom usethis ui_info
+#' @importFrom httr2 request req_user_agent req_url_path_append
+#' @importFrom httr2 req_url_query req_perform resp_body_raw
 ## usethis namespace: end
 NULL

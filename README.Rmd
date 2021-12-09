@@ -1,0 +1,37 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# mapirosa
+
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+## `r readLines(here::here("DESCRIPTION")) |> stringr::str_subset("^Title") |> stringr::str_extract("(?<=: ).*")`
+
+`r readLines(here::here("DESCRIPTION")) |> stringr::str_subset("^Description") |> stringr::str_extract("(?<=: ).*")` `r emo::ji('butterfly')`.
+
+
+<!-- http://www.rocketandco.co.uk/Site/Butterfly_Map_Art_files/final1.jpg -->
+
+![two butterfly shapes cut out from maps](buttermap.jpg)
+
+## Installation
+
+```r
+remotes::install_github("francisbarton/mapirosa")
+```
+
+
