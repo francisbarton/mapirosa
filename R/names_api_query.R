@@ -36,6 +36,19 @@ names_api_query <- function(x, max_results = 1, area = NULL, local_types = NULL,
       stringr::str_c(collapse = " ")
   }
 
+  if (!is.null(area)) {
+    # if area is not already a vector then assume it is an sf object
+    # check it's 27700 and get its bbox
+    if (!vctrs::vec_is(area)) {
+      area <- area %>%
+        sf::st_transform(27700) %>%
+        sf::st_bbox()
+    }
+
+    # if area was already passed in as a bbox or other vector
+    # then just collapse it (won't check if coords are in 27700)
+    area <- stringr::str_c(area, collapse = ",")
+  }
 
 
 
@@ -52,15 +65,17 @@ names_api_query <- function(x, max_results = 1, area = NULL, local_types = NULL,
     httr2::req_user_agent(user_agent) %>%
     httr2::req_url_query(query = as.character(x)) %>%
     httr2::req_url_query(maxresults = max_results) %>%
+    httr2::req_url_query(bounds = area) %>%
     httr2::req_url_query(fq = local_types) %>%
     httr2::req_url_query(key = os_data_key) %>%
     httr2::req_perform()
 
-  # places_vector %>%
-  # purrr::map( ~ names_api_query(., local_types = c("city", "town")) %>%
+  # Example of how to use function and process API response
+  # places_vector %>% # eg c("Stroud", "Gloucester")
+  #   purrr::map( ~ names_api_query(., local_types = c("city", "town")) %>%
   #               httr2::resp_body_json() %>%
   #               purrr::pluck("results", 1)
-  # ) %>%
+  #   ) %>%
   #   purrr::map_df(1) %>%
   #   janitor::clean_names() %>%
   #   sf::st_as_sf(coords = c("geometry_x", "geometry_y"), crs = 27700)
