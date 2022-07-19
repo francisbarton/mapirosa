@@ -15,7 +15,7 @@
 #'
 #' @return A raw response from the API endpoint - you will want to process this.
 #' @export
-names_api_query <- function(x, max_results = 1, area = NULL, local_types = NULL, user_agent = NULL) {
+query_names_api <- function(x, max_results = 1, area = NULL, local_types = NULL, user_agent = NULL) {
 
   # OS Names API
   # See https://osdatahub.os.uk/docs/names/technicalSpecification

@@ -7,13 +7,15 @@ Description: A package to enable accessing basemap tiles from the [OS Maps API](
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 Imports: 
+    assertthat,
     dplyr,
-    magrittr,
-    sf,
     httr2,
+    magrittr,
     png,
+    purrr,
+    sf,
     snakecase,
     stringr,
     terra,
@@ -21,6 +23,7 @@ Imports:
     usethis,
     vctrs
 Suggests: 
-    assertthat,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Depends: 
+    R (>= 2.10)
