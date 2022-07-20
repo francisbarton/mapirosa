@@ -4,3 +4,4 @@
 ^README\.Rmd$
 ^R/blah\.R$
 ^buttermap\.jpg$
+^data-raw$
