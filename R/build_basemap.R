@@ -4,10 +4,10 @@
 #' ymax)
 #' @param zoom Zoom level, an integer. For `crs = 27700`, this must be between
 #' 0 and 13. For `crs = 3857`, this must be between 7 and 20. Certain
-#' combinations of zoom level and type retrieve tiles from the OS's Premium
+#' combinations of zoom level and style retrieve tiles from the OS's Premium
 #' service, which can generate a financial charge once past a certain level of
 #' usage. See the OS Maps API webpages for details.
-#' @param type Map type, a string. One of "road", "outdoor", "light",
+#' @param style Map style, a string. One of "road", "outdoor", "light",
 #' "leisure". Leisure is only available in the 27700 CRS.
 #' @param crs CRS code (EPSG), an integer, either `27700` (British National
 #' Grid) or `3857` (standard web mapping projected coordinate system eg Google
@@ -31,7 +31,7 @@
 #' basemap on the fly, cache data as local PNG files. Not functional yet;
 #' hence set to `FALSE`.
 #' @param allow_premium Whether to only access tiles from zoom levels that are
-#' within the "OpenData" tier of the OS API. These vary according to map type
+#' within the "OpenData" tier of the OS API. These vary according to map style
 #' and CRS. See the [API Technical Specification](https://osdatahub.os.uk/docs/wmts/technicalSpecification) for details. Defaults to FALSE. Set to TRUE if
 #' you wish to access zoom levels within the "Premium" service tier (chargeable
 #' - see [https://osdatahub.os.uk/plans](https://osdatahub.os.uk/plans))
@@ -40,67 +40,43 @@
 #' Requires the `usethis` package to be installed. By default, `FALSE` if not
 #' in an interactive (`interactive()`) session, TRUE if in an interactive
 #' session.
+#' @param debug Whether to show any errors that were received from the API.
+#' This package should handle errors gracefully in general, but if your basemap
+#' is not complete then you may wish to turn this on to see what errors there
+#' might be.
 #'
 #' @returns A spatially-referenced raster, hopefully.
 #' @export
 #'
 #' @examples
-#' oxford <- create_bb("Oxford", 27700)
-#' build_basemap(oxford, zoom = 5, type = "leisure", crs = 27700)
+#' oxford <- create_bbox("Oxford", 27700)
+#' oxford_basemap <- build_basemap(oxford, zoom = 5, style = "road", crs = 27700)
+#' oxford_basemap
+#'
+#' tmap::tm_shape(basemap, raster.downsample = FALSE) +
+#'   tmap::tm_rgb(max.value = 1)
 #'
 build_basemap <- function(
     bbox,
     zoom,
-    type = c("outdoor", "road", "light", "leisure"),
+    style = c("outdoor", "road", "light", "leisure"),
     crs = c(27700, 3857),
     squarify = TRUE,
     squarify_to = c("south", "east"),
     cache_tiles = FALSE,
     allow_premium = FALSE,
-    chatty = NULL
+    chatty = NULL,
+    debug = FALSE
     ) {
 
 
 
-
-  assert_that(length(bbox) == 4)
-  assert_that(all(is.numeric(bbox)))
-  assert_that(crs %in% c(27700, 3857))
-  type <- tolower(type)
-  assert_that(type %in% c("outdoor", "road", "light", "leisure"))
-
-
-  if (is.null(chatty)) chatty <- interactive()
-
-
-  if (crs == 27700) {
-    raster_data <- generate_png_27700(bbox = bbox, zoom = zoom, type = type, squarify = squarify, squarify_to = squarify_to, allow_premium = allow_premium, chatty = chatty)
-  }
-
-  if (crs == 3857) {
-    raster_data <- generate_png_3857(bbox = bbox, zoom = zoom, type = type, squarify = squarify, squarify_to = squarify_to, allow_premium = allow_premium, chatty = chatty)
-  }
+  raster_data <- generate_png_data(bbox = bbox, zoom = zoom, style = style, crs = crs, squarify = squarify, squarify_to = squarify_to, allow_premium = allow_premium, chatty = chatty)
 
   png_data <- raster_data[[1]]
   extents <- raster_data[[2]]
 
-  # Copied from {xfun} - to save having a dependency on that pkg
-  # Thanks to Yihui for his code
-  # https://github.com/yihui/xfun/blob/main/R/paths.R#L403
-  #
-  # dir_exists <- function(x) utils::file_test('-d', x)
-  # dir_create <- function(x, recursive = TRUE, ...) {
-  #   dir_exists(x) || dir.create(x, recursive = recursive, ...)
-  # }
 
-  # path <- file.path(download_dir, type, zoom)
-  #
-  # if (xfun::dir_create(path)) {
-  #   outfile <- file.path(download_dir, type, zoom, stringr::str_glue("{x}_{y}.png"))
-  # }
-
-  # write PNG data to files
-  # png::writePNG(target = outfile)
 
 
 
@@ -114,6 +90,8 @@ build_basemap <- function(
 
   raster_list <- purrr::map2(png_data, extents, to_rast, crs = crs)
   collection <- terra::sprc(raster_list)
+
+
 
   # return
   terra::merge(collection)

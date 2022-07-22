@@ -7,14 +7,15 @@
 #' @param user_agent A User-Agent string to pass to the API
 #' @return Raw PNG data
 #' @export
-query_maps_api <- function(x, y, zoom, type, crs, user_agent = NULL) {
+query_maps_api <- function(x, y, zoom, style, crs, user_agent = NULL) {
   # OS Maps API - zxy (instead of WMTS)
   # See https://osdatahub.os.uk/docs/wmts/technicalSpecification
   # for details
 
   os_maps_base_url <- "https://api.os.uk/maps/raster/v1/zxy/"
+  style <- stringr::str_to_title(style)
   zxy_string <- stringr::str_glue(
-    "{stringr::str_to_sentence(type)}_{crs}/{zoom}/{x}/{y}.png")
+    "{style}_{crs}/{zoom}/{x}/{y}.png")
 
 
   # TODO implement proper process for key mgmt/user supply via {httr2} in time
@@ -37,3 +38,4 @@ query_maps_api <- function(x, y, zoom, type, crs, user_agent = NULL) {
 }
 
 safely_query_maps_api <- function(...) "dummy"
+possibly_query_maps_api <- function(...) "dummy"

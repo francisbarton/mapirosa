@@ -34,4 +34,14 @@ knitr::opts_chunk$set(
 remotes::install_github("francisbarton/mapirosa")
 ```
 
+## Examples
+
+```r
+oxford <- create_bbox("Oxford", 27700)
+build_basemap(oxford, zoom = 5, type = "leisure", crs = 27700)
+basemap
+
+tmap::tm_shape(basemap, raster.downsample = FALSE) +
+  tmap::tm_rgb(max.value = 1)
+```
 
