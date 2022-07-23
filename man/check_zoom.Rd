@@ -2,11 +2,11 @@
 % Please edit documentation in R/check_zoom.R
 \name{check_zoom}
 \alias{check_zoom}
-\title{Internal check for a valid combination of CRS, map type and zoom level}
+\title{Internal check for a valid combination of CRS, map style and zoom level}
 \usage{
 check_zoom(
   zoom,
-  type = c("outdoor", "road", "light", "leisure"),
+  style = c("outdoor", "road", "light", "leisure"),
   crs = c(27700, 3857),
   allow_premium = FALSE,
   chatty = NULL
@@ -15,11 +15,11 @@ check_zoom(
 \arguments{
 \item{zoom}{Zoom level, an integer. For \code{crs = 27700}, this must be between
 0 and 13. For \code{crs = 3857}, this must be between 7 and 20. Certain
-combinations of zoom level and type retrieve tiles from the OS's Premium
+combinations of zoom level and style retrieve tiles from the OS's Premium
 service, which can generate a financial charge once past a certain level of
 usage. See the OS Maps API webpages for details.}
 
-\item{type}{Map type, a string. One of "road", "outdoor", "light",
+\item{style}{Map style, a string. One of "road", "outdoor", "light",
 "leisure". Leisure is only available in the 27700 CRS.}
 
 \item{crs}{CRS code (EPSG), an integer, either \code{27700} (British National
@@ -27,7 +27,7 @@ Grid) or \code{3857} (standard web mapping projected coordinate system eg Google
 Maps, OSM).}
 
 \item{allow_premium}{Whether to only access tiles from zoom levels that are
-within the "OpenData" tier of the OS API. These vary according to map type
+within the "OpenData" tier of the OS API. These vary according to map style
 and CRS. See the \href{https://osdatahub.os.uk/docs/wmts/technicalSpecification}{API Technical Specification} for details. Defaults to FALSE. Set to TRUE if
 you wish to access zoom levels within the "Premium" service tier (chargeable
 \itemize{
@@ -44,5 +44,5 @@ session.}
 No visible return unless an error is thrown
 }
 \description{
-Internal check for a valid combination of CRS, map type and zoom level
+Internal check for a valid combination of CRS, map style and zoom level
 }

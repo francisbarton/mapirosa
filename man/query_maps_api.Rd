@@ -4,7 +4,7 @@
 \alias{query_maps_api}
 \title{query_maps_api}
 \usage{
-query_maps_api(x, y, zoom, type, crs, user_agent = NULL)
+query_maps_api(x, y, zoom, style, crs, user_agent = NULL)
 }
 \arguments{
 \item{x}{Tile number (horizontally)}
@@ -13,11 +13,11 @@ query_maps_api(x, y, zoom, type, crs, user_agent = NULL)
 
 \item{zoom}{Zoom level, an integer. For \code{crs = 27700}, this must be between
 0 and 13. For \code{crs = 3857}, this must be between 7 and 20. Certain
-combinations of zoom level and type retrieve tiles from the OS's Premium
+combinations of zoom level and style retrieve tiles from the OS's Premium
 service, which can generate a financial charge once past a certain level of
 usage. See the OS Maps API webpages for details.}
 
-\item{type}{Map type, a string. One of "road", "outdoor", "light",
+\item{style}{Map style, a string. One of "road", "outdoor", "light",
 "leisure". Leisure is only available in the 27700 CRS.}
 
 \item{crs}{CRS code (EPSG), an integer, either \code{27700} (British National

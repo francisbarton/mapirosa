@@ -7,13 +7,14 @@
 build_basemap(
   bbox,
   zoom,
-  type = c("outdoor", "road", "light", "leisure"),
+  style = c("outdoor", "road", "light", "leisure"),
   crs = c(27700, 3857),
   squarify = TRUE,
   squarify_to = c("south", "east"),
   cache_tiles = FALSE,
   allow_premium = FALSE,
-  chatty = NULL
+  chatty = NULL,
+  debug = FALSE
 )
 }
 \arguments{
@@ -22,11 +23,11 @@ ymax)}
 
 \item{zoom}{Zoom level, an integer. For \code{crs = 27700}, this must be between
 0 and 13. For \code{crs = 3857}, this must be between 7 and 20. Certain
-combinations of zoom level and type retrieve tiles from the OS's Premium
+combinations of zoom level and style retrieve tiles from the OS's Premium
 service, which can generate a financial charge once past a certain level of
 usage. See the OS Maps API webpages for details.}
 
-\item{type}{Map type, a string. One of "road", "outdoor", "light",
+\item{style}{Map style, a string. One of "road", "outdoor", "light",
 "leisure". Leisure is only available in the 27700 CRS.}
 
 \item{crs}{CRS code (EPSG), an integer, either \code{27700} (British National
@@ -55,7 +56,7 @@ basemap on the fly, cache data as local PNG files. Not functional yet;
 hence set to \code{FALSE}.}
 
 \item{allow_premium}{Whether to only access tiles from zoom levels that are
-within the "OpenData" tier of the OS API. These vary according to map type
+within the "OpenData" tier of the OS API. These vary according to map style
 and CRS. See the \href{https://osdatahub.os.uk/docs/wmts/technicalSpecification}{API Technical Specification} for details. Defaults to FALSE. Set to TRUE if
 you wish to access zoom levels within the "Premium" service tier (chargeable
 \itemize{
@@ -67,6 +68,11 @@ used, and the data and number of tiles that will be downloaded.
 Requires the \code{usethis} package to be installed. By default, \code{FALSE} if not
 in an interactive (\code{interactive()}) session, TRUE if in an interactive
 session.}
+
+\item{debug}{Whether to show any errors that were received from the API.
+This package should handle errors gracefully in general, but if your basemap
+is not complete then you may wish to turn this on to see what errors there
+might be.}
 }
 \value{
 A spatially-referenced raster, hopefully.
@@ -75,7 +81,11 @@ A spatially-referenced raster, hopefully.
 Build a basemap from the Ordnance Survey Maps API
 }
 \examples{
-oxford <- create_bb("Oxford", 27700)
-build_basemap(oxford, zoom = 5, type = "leisure", crs = 27700)
+oxford <- create_bbox("Oxford", 27700)
+oxford_basemap <- build_basemap(oxford, zoom = 5, style = "road", crs = 27700)
+oxford_basemap
+
+tmap::tm_shape(basemap, raster.downsample = FALSE) +
+  tmap::tm_rgb(max.value = 1)
 
 }

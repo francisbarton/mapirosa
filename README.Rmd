@@ -11,6 +11,7 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+library(mapirosa)
 ```
 
 # mapirosa
@@ -21,12 +22,12 @@ knitr::opts_chunk$set(
 
 ## `r readLines(here::here("DESCRIPTION")) |> stringr::str_subset("^Title") |> stringr::str_extract("(?<=: ).*")`
 
-`r readLines(here::here("DESCRIPTION")) |> stringr::str_subset("^Description") |> stringr::str_extract("(?<=: ).*")` `r emo::ji('butterfly')`.
+`r readLines(here::here("DESCRIPTION")) |>stringr::str_subset("^Description") |> stringr::str_extract("(?<=: ).*")`
 
 
 <!-- http://www.rocketandco.co.uk/Site/Butterfly_Map_Art_files/final1.jpg -->
 
-![two butterfly shapes cut out from maps](buttermap.jpg)
+![two butterfly shapes cut out from paper maps](buttermap.jpg)
 
 ## Installation
 
@@ -36,12 +37,61 @@ remotes::install_github("francisbarton/mapirosa")
 
 ## Examples
 
-```r
-oxford <- create_bbox("Oxford", 27700)
-build_basemap(oxford, zoom = 5, type = "leisure", crs = 27700)
-basemap
+```{r examples}
+if (requireNamespace("osmdata")) {
+  oxford <- create_bbox("Oxford", 27700)
+} else {
+  oxford <- c(
+      xmin = 448100.3,
+      ymin = 201646.6,
+      xmax = 457014.2,
+      ymax = 211088.8)
+}
 
-tmap::tm_shape(basemap, raster.downsample = FALSE) +
-  tmap::tm_rgb(max.value = 1)
+oxford_basemap <- build_basemap(
+  bbox = oxford,
+  zoom = 5,
+  style = "road",
+  squarify = FALSE,
+  crs = 27700)
+
+oxford_basemap
+
+if (requireNamespace("tmap")) {
+  suppressMessages(tmap::tmap_mode("plot"))
+  tmap::tm_shape(oxford_basemap, raster.downsample = FALSE) +
+    tmap::tm_rgb(max.value = 1)
+}
+
+if (requireNamespace("osmdata", quietly = TRUE)) {
+  oxford <- create_bbox("Oxford", 3857)
+} else {
+  oxford <- c(
+      xmin = -145188.1,
+      ymin = 6748034.5,
+      xmax = -130890.9,
+      ymax = 6763371.2)
+}
+
+oxford_basemap <- build_basemap(
+  bbox = oxford,
+  zoom = 12,
+  style = "outdoor",
+  squarify = TRUE,
+  crs = 3857)
+
+oxford_basemap
+
+# tidyterra: https://dieghernan.github.io/tidyterra/reference/geom_spatraster_rgb.html)
+
+if (requireNamespace("ggplot2") & requireNamespace("tidyterra")) {
+  ggplot2::ggplot() +
+    tidyterra::geom_spatraster_rgb(
+      data = oxford_basemap,
+      maxcell = 1e7,
+      max_col_value = 1) +
+    ggplot2::coord_sf() +
+    ggplot2::theme_void()
+}
 ```
 
