@@ -2,36 +2,80 @@
 % Please edit documentation in R/build_basemap.R
 \name{build_basemap}
 \alias{build_basemap}
-\title{build_basemap}
+\title{Build a basemap from the Ordnance Survey Maps API}
 \usage{
 build_basemap(
   bbox,
   zoom,
   type = c("outdoor", "road", "light", "leisure"),
   crs = c(27700, 3857),
+  squarify = TRUE,
+  squarify_to = c("south", "east"),
   cache_tiles = FALSE,
   allow_premium = FALSE,
-  chatty = TRUE
+  chatty = NULL
 )
 }
 \arguments{
-\item{bbox}{A bbox object (a length 4 vector with names xmin, ymin, xmax, ymax)}
+\item{bbox}{A bbox object (a length 4 vector with names xmin, ymin, xmax,
+ymax)}
 
-\item{zoom}{Zoom level, an integer}
+\item{zoom}{Zoom level, an integer. For \code{crs = 27700}, this must be between
+0 and 13. For \code{crs = 3857}, this must be between 7 and 20. Certain
+combinations of zoom level and type retrieve tiles from the OS's Premium
+service, which can generate a financial charge once past a certain level of
+usage. See the OS Maps API webpages for details.}
 
-\item{type}{Map type, a string. One of "Road", "Outdoor", "Light", "Leisure".}
+\item{type}{Map type, a string. One of "road", "outdoor", "light",
+"leisure". Leisure is only available in the 27700 CRS.}
 
-\item{crs}{CRS code (EPSG), an integer, either 27700 or 3857}
+\item{crs}{CRS code (EPSG), an integer, either \code{27700} (British National
+Grid) or \code{3857} (standard web mapping projected coordinate system eg Google
+Maps, OSM).}
 
-\item{cache_tiles}{Instead of converting PNG data from the API into a basemap on the fly, cache data as local PNG files. Not functional yet; defaults to FALSE.}
+\item{squarify}{Whether to add rows/columns to a basemap to make it square.
+\code{TRUE} by default. If a bbox covers a set of basemap tiles that is wider
+than it is high ("landscape"), \code{squarify} will add row(s) of tiles as
+necessary to make the basemap square. For a portrait basemap (higher than it
+is wide), \code{squarify} retrieves extra columns to make the basemap square.}
 
-\item{allow_premium}{Whether to only access tiles from zoom levels that are within the "OpenData" tiers of the OS API. These vary according to map type and CRS. See https://osdatahub.os.uk/docs/wmts/technicalSpecification for details. Defaults to FALSE. Set to TRUE if you wish to access higher zoom levels within the "Premium" data tiers (chargeable - see https://osdatahub.os.uk/plans)}
+\item{squarify_to}{Where \code{squarify} adds an odd number of columns or rows,
+one more will be added to one side than to the opposite side. In case you
+have a preference which side should receive more, you can stipulate this
+here. Needs a character vector. This is set to \code{c("south", "east")} by
+default. If you know that \code{squarify} will definitely add columns, say, you
+can stipulate a single string e.g. \code{"west"}. If you are not sure whether it
+will add rows or columns, then enter a vector of length 2, e.g.
+\code{c("north", "west")} depending on your preferences. Note that if 5 rows are
+added, 3 will be added to your preferred direction, and 2 to the other side;
+this parameter does not force all 5 rows to be added to your preferred side!}
 
-\item{chatty}{Provide a brief info summary of the parameters that will be used. Requires the \code{usethis} package to be installed. Defaults to FALSE.}
+\item{cache_tiles}{Instead of converting PNG data from the API into a
+basemap on the fly, cache data as local PNG files. Not functional yet;
+hence set to \code{FALSE}.}
+
+\item{allow_premium}{Whether to only access tiles from zoom levels that are
+within the "OpenData" tier of the OS API. These vary according to map type
+and CRS. See the \href{https://osdatahub.os.uk/docs/wmts/technicalSpecification}{API Technical Specification} for details. Defaults to FALSE. Set to TRUE if
+you wish to access zoom levels within the "Premium" service tier (chargeable
+\itemize{
+\item see \url{https://osdatahub.os.uk/plans})
+}}
+
+\item{chatty}{Whether to provide a summary of the parameters that will be
+used, and the data and number of tiles that will be downloaded.
+Requires the \code{usethis} package to be installed. By default, \code{FALSE} if not
+in an interactive (\code{interactive()}) session, TRUE if in an interactive
+session.}
 }
 \value{
 A spatially-referenced raster, hopefully.
 }
 \description{
 Build a basemap from the Ordnance Survey Maps API
+}
+\examples{
+oxford <- create_bb("Oxford", 27700)
+build_basemap(oxford, zoom = 5, type = "leisure", crs = 27700)
+
 }

@@ -4,7 +4,7 @@
 \name{mapirosa-package}
 \alias{mapirosa}
 \alias{mapirosa-package}
-\title{mapirosa: Access OS Open Data APIs From R}
+\title{mapirosa: Access OS OpenData APIs From R}
 \description{
 A package to enable accessing basemap tiles from the [OS Maps API](https://osdatahub.os.uk/docs/wmts/overview), initially. Access to other OS (Ordnance Survey) Data Hub APIs may follow. The primary motivation for this project was to find a map tile service that supplies tiles in the British National Grid (27700) CRS, unlike the usual web mapping standard CRS of 3857. The name of the package is an intentional corruption of the Spanish word mariposa.
 }

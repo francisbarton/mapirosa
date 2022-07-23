@@ -1,54 +1,42 @@
-tile_logic_27700 <- function(x, zoom, type = c("easting", "northing")) {
-  if (type == "easting") {
+tile_logic_27700 <- function(bbox, zoom, tile_size) {
 
-    number_of_tiles_across <- grid_tiles_27700 %>%
-      dplyr::filter(.data$zoom == .env$zoom) %>%
-      dplyr::pull(.data$x)
+  # Here's the trick! False origins!
+  # https://github.com/OrdnanceSurvey/tile-name-derivation
+  false_origin_x <- -238375.0
+  false_origin_y <- 1376256.0
 
-    pct_across <- x / 7e5
+  west_col <- floor((bbox[["xmin"]] - false_origin_x) / tile_size)
+  east_col <- floor((bbox[["xmax"]] - false_origin_x) / tile_size)
+  north_row <- floor((false_origin_y - bbox[["ymax"]]) / tile_size)
+  south_row <- floor((false_origin_y - bbox[["ymin"]]) / tile_size)
 
-    tile_number <- if (pct_across == 1) {
-      number_of_tiles_across - 1
-    } else {
-      floor(pct_across * number_of_tiles_across)
-    }
-  }
-
-  if (type == "northing") {
-
-    number_of_tiles_down <- grid_tiles_27700 %>%
-      dplyr::filter(.data$zoom == .env$zoom) %>%
-      dplyr::pull(.data$y)
-
-    pct_down <- (1.3e6 - x) / 1.3e6
-
-    tile_number <- if (pct_down == 1) {
-      number_of_tiles_down - 1
-    } else {
-      floor(pct_down * number_of_tiles_down)
-    }
-  }
-
-  tile_number
+  # return
+  c(west_col, east_col, north_row, south_row)
 }
 
-tile_logic_3857 <- function(x, zoom, type = c("longitude", "latitude")) {
 
-  if (type == "longitude") {
-    # https://epsg.io/3857
-    east_west_m <- 40052753 # length of equator in m
 
-    pct_across <- ((east_west_m / 2) + x) / east_west_m
-    tile_number <- floor(pct_across * 2^zoom)
-  }
+tile_logic_3857 <- function(bbox, zoom, equator) {
 
-  if (type == "latitude") {
-    # https://epsg.io/3857
-    north_south_m <- 40097932
+  # Note that the extent of the 3857 tile matrix is square,
+  # ie its north-south height is the same as its east-west width (~ the length
+  # of the equator). Hence `equator` can be used in n-s calculations as well.
 
-    pct_down <- ((north_south_m / 2) - x) / north_south_m
-    tile_number <- floor(pct_down * 2^zoom)
-  }
+  # How far (%) across (west to east) the world is a particular easting?
+  # x is relative to Greenwich so we have to add it to (equator / 2) first.
+  pct_across <- function(x) ((equator / 2) + x) / equator
 
-  tile_number
+  # How far (%) down (north to south) the world is a particular northing?
+  # x is a northing so we have to subtract it from the distance from the
+  # equator to the top of the WGS84 bounds first, thereby turning it into a
+  # distance in the southerly direction from the top.
+  pct_down <- function(x) ((equator / 2) - x) / equator
+
+  west_col <- floor(pct_across(bbox[["xmin"]]) * 2^zoom)
+  east_col <- floor(pct_across(bbox[["xmax"]]) * 2^zoom)
+  north_row <- floor(pct_down(bbox[["ymax"]]) * 2^zoom)
+  south_row <- floor(pct_down(bbox[["ymin"]]) * 2^zoom)
+
+  # return
+  c(west_col, east_col, north_row, south_row)
 }

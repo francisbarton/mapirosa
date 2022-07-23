@@ -2,7 +2,6 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^README\.Rmd$
+^R/blah\.R$
 ^buttermap\.jpg$
-^R/test_bbox\.R$
 ^data-raw$
-^R/features_api_query\.R$
