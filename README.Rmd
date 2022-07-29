@@ -95,3 +95,22 @@ if (requireNamespace("ggplot2") & requireNamespace("tidyterra")) {
 }
 ```
 
+## Help
+
+Does anyone know how to get it so that the PNG data comes back based on a maximum of 255 instead of a maximum of 1?
+
+
+## OS Places API
+
+_more info to come on this function_
+
+
+## Further resources
+
+* play about with the different OS map styles and the two CRSs
+* ceramic
+* slippymath
+* basemaps
+* OS resources on github
+* Maps API technical specification
+* 
