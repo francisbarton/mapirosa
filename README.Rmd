@@ -22,7 +22,7 @@ library(mapirosa)
 
 ## `r readLines(here::here("DESCRIPTION")) |> stringr::str_subset("^Title") |> stringr::str_extract("(?<=: ).*")`
 
-`r readLines(here::here("DESCRIPTION")) |>stringr::str_subset("^Description") |> stringr::str_extract("(?<=: ).*")`
+`r readLines(here::here("DESCRIPTION")) |> stringr::str_subset("^Description") |> stringr::str_extract("(?<=: ).*")`
 
 
 <!-- http://www.rocketandco.co.uk/Site/Butterfly_Map_Art_files/final1.jpg -->
