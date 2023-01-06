@@ -10,7 +10,7 @@ generate_png_data <- function(
     squarify = TRUE,
     squarify_to = c("south", "east"),
     allow_premium = FALSE,
-    chatty = NULL,
+    chatty = rlang::is_interactive(),
     debug = FALSE
     ) {
 
@@ -20,8 +20,6 @@ generate_png_data <- function(
   assert_that(crs %in% c(27700, 3857))
   style <- tolower(style)
   assert_that(style %in% c("outdoor", "road", "light", "leisure"))
-
-  if (is.null(chatty)) chatty <- interactive()
 
   # Check zoom, style, crs and data tier -------------------------------------
 
@@ -107,12 +105,14 @@ generate_png_data <- function(
     sqt <- corner_tiles
   }
 
-  grid <- tidyr::expand_grid(x = seq(sqt[[1]], sqt[[2]]), y = seq(sqt[[3]], sqt[[4]]))
+  grid <- tidyr::expand_grid(
+    x = seq(sqt[[1]], sqt[[2]]),
+    y = seq(sqt[[3]], sqt[[4]]))
 
 
-  if (chatty & requireNamespace("usethis")) {
+  if (chatty) {
     stopifnot(
-      stringr::str_glue("This request will retrieve {nrow(grid)} tiles, weighing approximately {nrow(grid) * 1.5}MB in total. Proceed?") %>%
+      stringr::str_glue("This request will retrieve {nrow(grid)} tiles, weighing approximately {nrow(grid) * 1.5}MB in total. Proceed?") |>
         ui_yeah()
     )
   }
@@ -127,83 +127,59 @@ generate_png_data <- function(
 
   # `possibly()` might be more appropriate than `safely()`, as we are not
   # intending to do anything with any error messages anyway - just return NULL
-  api_response <- grid %>%
-    purrr::pmap(safely_query_maps_api, zoom = zoom, style = title_style, crs = crs)
+  api_response <- grid |>
+    purrr::pmap(safely_query_maps_api,
+    zoom = zoom,
+    style = title_style,
+    crs = crs)
 
   if (debug) {
-    api_errors <- api_response %>%
-      purrr::map("error") %>%
+    api_errors <- api_response |>
+      purrr::map("error") |>
       purrr::compact()
 
     # Let's see how well this works. Presentation of readout may need improving
     if (length(api_errors) > 0) cat(api_errors)
   }
 
-  api_results <- api_response %>%
+  api_results <- api_response |>
     purrr::map("result")
-
-  # api_response <- grid %>%
-  #   purrr::pmap(possibly_query_maps_api, zoom = zoom, style = title_style, crs = crs)
 
   # Building in some safety catches,
   # just in case we got some NULLs
   success <- which(!purrr::map_lgl(api_results, is.null))
 
   if (length(success) < nrow(grid)) {
-    stringr::str_glue("{length(success)} of {nrow(grid)} tiles retrieved.") %>%
+    stringr::str_glue("{length(success)} of {nrow(grid)} tiles retrieved.") |>
   ui_info()
   }
 
 
   # only once we have got rid of NULLs do we try to read in the raw data
   # to PNG format
-  png_data <- api_results %>%
-    purrr::compact() %>%
+  png_data <- api_results |>
+    purrr::compact() |>
     purrr::map(png::readPNG, info = TRUE)
 
   # If we did get some NULLs that we removed from `png_data` using `compact()`
   # we also need to remove those rows from the grid so the two match up
-  grid <- grid %>%
+  grid <- grid |>
     dplyr::slice(success)
 
   assert_that(length(png_data) == nrow(grid))
 
 
-
-  # Copied from {xfun} - to save having a dependency on that pkg
-  # Thanks to Yihui for his code
-  # https://github.com/yihui/xfun/blob/main/R/paths.R#L403
-  #
-  # dir_exists <- function(x) utils::file_test('-d', x)
-  # dir_create <- function(x, recursive = TRUE, ...) {
-  #   dir_exists(x) || dir.create(x, recursive = recursive, ...)
-  # }
-
-  # path <- file.path(download_dir, style, zoom)
-  #
-  # if (xfun::dir_create(path)) {
-  #   outfile <- file.path(download_dir, style, zoom, stringr::str_glue("{x}_{y}.png"))
-  # }
-
-  # write PNG data to files
-  # png::writePNG(target = outfile)
-
-
-
-
-
   # Use constants (by CRS) to create tile extents from data grid ------------
 
 
-  tile_extents <- grid %>%
-    dplyr::mutate(xmin = (tile_size * .data$x) + left_edge) %>%
-    dplyr::mutate(xmax = .data$xmin + tile_size) %>%
-    dplyr::mutate(ymin = top_edge - (tile_size * (.data$y + 1))) %>%
-    dplyr::mutate(ymax = .data$ymin + tile_size) %>%
-    dplyr::select(.data$xmin:.data$ymax) %>%
-    dplyr::rowwise() %>%
-    dplyr::group_split() %>%
-    purrr::map(as.vector) %>%
+  tile_extents <- grid |>
+    dplyr::mutate(xmin = (tile_size * .data$x) + left_edge, .keep = "unused") |>
+    dplyr::mutate(xmax = .data$xmin + tile_size) |>
+    dplyr::mutate(ymin = top_edge - (tile_size * (.data$y + 1)), .keep = "unused") |>
+    dplyr::mutate(ymax = .data$ymin + tile_size) |>
+    dplyr::rowwise() |>
+    dplyr::group_split() |>
+    # purrr::map(as.vector) |>
     purrr::map(unlist)
 
 

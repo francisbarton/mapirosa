@@ -12,7 +12,7 @@ generate_png_data(
   squarify = TRUE,
   squarify_to = c("south", "east"),
   allow_premium = FALSE,
-  chatty = NULL,
+  chatty = rlang::is_interactive(),
   debug = FALSE
 )
 }

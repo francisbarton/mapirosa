@@ -2,7 +2,7 @@
 % Please edit documentation in R/query_names_api.R
 \name{query_names_api}
 \alias{query_names_api}
-\title{query_names_api}
+\title{Retrieve data from the OS Names API}
 \usage{
 query_names_api(
   x,
@@ -13,39 +13,41 @@ query_names_api(
 )
 }
 \arguments{
-\item{x}{The name of a place, or a postcode for example. The API docs say 'A
-free string text search of OS Names, intended to be an ambiguous/fuzzy
-search.'}
+\item{x}{character. The name of a place, or a postcode for example. The API
+docs say 'A free string text search of OS Names, intended to be an
+ambiguous/fuzzy search.'}
 
-\item{max_results}{How many results to return. Can be from 1-100. Set to 1
-by default.}
+\item{max_results}{integer. How many results to return. Can be from 1-100.
+Set to 1 by default.}
 
-\item{area}{The bounding box of an area to limit search to. NULL by default -
-no filtering by area.}
+\item{area}{bbox. The bounding box of an area to limit search to. \code{NULL} by
+default - no filtering by area.}
 
-\item{local_types}{Types of result to return. Can be a vector of strings.
-Examples are 'City', 'Village'. See API docs for all options. NULL by default
-(no filtering by type).}
+\item{local_types}{character vector. Types of result to return. Examples are:
+'City', 'Village'. See API docs for all options. \code{NULL} by default (= no
+filtering by type).}
 
-\item{user_agent}{Currently NULL by default, which will use the package name.}
+\item{user_agent}{character. \code{NULL} by default, which will use the package
+name.}
 }
 \value{
-A raw response from the API endpoint - you will want to process this.
+A raw response from the API endpoint - you will want to process
+this.
 }
 \description{
-Retrieve data from the OS Names API ('find' method currently, not 'nearest' yet)
+Only uses 'find' method currently, not 'nearest' yet.
 See https://osdatahub.os.uk/docs/names/technicalSpecification for details.
 }
 \examples{
 # Example of how to use function and process API response
 
 places_vector <- c("Stroud", "Gloucester")
-places_vector \%>\%
-  purrr::map(query_names_api, local_types = c("city", "town")) \%>\%
-  httr2::resp_body_json() \%>\%
+places_vector |>
+  purrr::map(query_names_api, local_types = c("city", "town")) |>
+  httr2::resp_body_json() |>
   purrr::pluck("results", 1)
-  ) \%>\%
-  purrr::map_df(1) \%>\%
-  janitor::clean_names() \%>\%
+  ) |>
+  purrr::map_df(1) |>
+  janitor::clean_names() |>
   sf::st_as_sf(coords = c("geometry_x", "geometry_y"), crs = 27700)
 }

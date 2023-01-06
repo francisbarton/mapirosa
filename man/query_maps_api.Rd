@@ -2,7 +2,7 @@
 % Please edit documentation in R/query_maps_api.R
 \name{query_maps_api}
 \alias{query_maps_api}
-\title{query_maps_api}
+\title{Build and perform a query to the OS Maps API}
 \usage{
 query_maps_api(x, y, zoom, style, crs, user_agent = NULL)
 }

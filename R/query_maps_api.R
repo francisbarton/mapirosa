@@ -1,11 +1,11 @@
 #' Build and perform a query to the OS Maps API
 #'
-#' @title query_maps_api
 #' @inheritParams build_basemap
 #' @param x Tile number (horizontally)
 #' @param y Tile number (vertically)
 #' @param user_agent A User-Agent string to pass to the API
-#' @return Raw PNG data
+#' 
+#' @returns Raw PNG data
 #' @export
 query_maps_api <- function(x, y, zoom, style, crs, user_agent = NULL) {
   # OS Maps API - zxy (instead of WMTS)
@@ -24,18 +24,19 @@ query_maps_api <- function(x, y, zoom, style, crs, user_agent = NULL) {
 
   assert_that(length(os_data_key) > 0)
 
-  default_user_agent <- "mapirosa R package https://github.com/francisbarton/mapirosa"
-  user_agent <- match.arg(user_agent, choices = default_user_agent)
+  default_ua <- "mapirosa R package https://github.com/francisbarton/mapirosa"
+  user_agent <- ifelse(is.null(user_agent), default_ua, user_agent)
 
-  request(os_maps_base_url) %>%
-    # replace UA string with package name once made into package
-    req_user_agent(user_agent) %>%
-    req_url_path_append(zxy_string) %>%
-    req_url_query(key = os_data_key) %>%
-    req_perform() %>%
-    resp_check_status() %>%
+  request(os_maps_base_url) |>
+    req_user_agent(user_agent) |>
+    req_url_path_append(zxy_string) |>
+    req_url_query(key = os_data_key) |>
+    req_perform() |>
+    resp_check_status() |>
     resp_body_raw() # raw PNG data
 }
 
-safely_query_maps_api <- function(...) "dummy"
-possibly_query_maps_api <- function(...) "dummy"
+#' @export
+safely_query_maps_api <- function(...) {
+  purrr::safely(query_maps_api)(...)
+}

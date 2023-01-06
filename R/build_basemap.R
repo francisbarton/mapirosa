@@ -71,7 +71,15 @@ build_basemap <- function(
 
 
 
-  raster_data <- generate_png_data(bbox = bbox, zoom = zoom, style = style, crs = crs, squarify = squarify, squarify_to = squarify_to, allow_premium = allow_premium, chatty = chatty)
+  raster_data <- generate_png_data(
+    bbox = bbox,
+    zoom = zoom,
+    style = style,
+    crs = crs,
+    squarify = squarify,
+    squarify_to = squarify_to,
+    allow_premium = allow_premium,
+    chatty = chatty)
 
   png_data <- raster_data[[1]]
   extents <- raster_data[[2]]
@@ -81,9 +89,9 @@ build_basemap <- function(
 
 
   to_rast <- function(png, extent, crs) {
-    png %>%
-      terra::rast() %>%
-      terra::set.ext(extent) %>%
+    png |>
+      terra::rast() |>
+      terra::set.ext(extent) |>
       terra::set.crs(value = paste0("epsg:", crs))
   }
 
@@ -96,4 +104,3 @@ build_basemap <- function(
   # return
   terra::merge(collection)
 }
-

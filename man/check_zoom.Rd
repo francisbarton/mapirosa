@@ -9,7 +9,7 @@ check_zoom(
   style = c("outdoor", "road", "light", "leisure"),
   crs = c(27700, 3857),
   allow_premium = FALSE,
-  chatty = NULL
+  chatty = rlang::is_interactive()
 )
 }
 \arguments{
