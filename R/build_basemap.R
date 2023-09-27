@@ -35,11 +35,6 @@
 #' and CRS. See the [API Technical Specification](https://osdatahub.os.uk/docs/wmts/technicalSpecification) for details. Defaults to FALSE. Set to TRUE if
 #' you wish to access zoom levels within the "Premium" service tier (chargeable
 #' - see [https://osdatahub.os.uk/plans](https://osdatahub.os.uk/plans))
-#' @param chatty Whether to provide a summary of the parameters that will be
-#' used, and the data and number of tiles that will be downloaded.
-#' Requires the `usethis` package to be installed. By default, `FALSE` if not
-#' in an interactive (`interactive()`) session, TRUE if in an interactive
-#' session.
 #' @param debug Whether to show any errors that were received from the API.
 #' This package should handle errors gracefully in general, but if your basemap
 #' is not complete then you may wish to turn this on to see what errors there
@@ -49,11 +44,11 @@
 #' @export
 #'
 #' @examples
-#' oxford <- create_bbox("Oxford", 27700)
-#' oxford_basemap <- build_basemap(oxford, zoom = 5, style = "road", crs = 27700)
+#' oxf <- create_bbox("Oxford", 27700)
+#' oxford_basemap <- build_basemap(oxf, zoom = 5, style = "road", crs = 27700)
 #' oxford_basemap
 #'
-#' tmap::tm_shape(basemap, raster.downsample = FALSE) +
+#' tmap::tm_shape(oxford_basemap, raster.downsample = FALSE) +
 #'   tmap::tm_rgb(max.value = 1)
 #'
 build_basemap <- function(
@@ -65,7 +60,6 @@ build_basemap <- function(
     squarify_to = c("south", "east"),
     cache_tiles = FALSE,
     allow_premium = FALSE,
-    chatty = NULL,
     debug = FALSE
     ) {
 
@@ -78,8 +72,8 @@ build_basemap <- function(
     crs = crs,
     squarify = squarify,
     squarify_to = squarify_to,
-    allow_premium = allow_premium,
-    chatty = chatty)
+    allow_premium = allow_premium
+  )
 
   png_data <- raster_data[[1]]
   extents <- raster_data[[2]]
@@ -87,16 +81,17 @@ build_basemap <- function(
 
 
 
-
   to_rast <- function(png, extent, crs) {
-    png |>
-      terra::rast() |>
-      terra::set.ext(extent) |>
-      terra::set.crs(value = paste0("epsg:", crs))
+    out <- png |>
+      terra::rast()
+    terra::set.ext(out, extent)
+    terra::set.crs(out, paste0("epsg:", crs))
+    out
   }
 
 
-  raster_list <- purrr::map2(png_data, extents, to_rast, crs = crs)
+  raster_list <- png_data |>
+    purrr::map2(extents, \(x, y) to_rast(x, y, crs = crs))
   collection <- terra::sprc(raster_list)
 
 

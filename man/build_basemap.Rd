@@ -13,7 +13,6 @@ build_basemap(
   squarify_to = c("south", "east"),
   cache_tiles = FALSE,
   allow_premium = FALSE,
-  chatty = NULL,
   debug = FALSE
 )
 }
@@ -63,12 +62,6 @@ you wish to access zoom levels within the "Premium" service tier (chargeable
 \item see \url{https://osdatahub.os.uk/plans})
 }}
 
-\item{chatty}{Whether to provide a summary of the parameters that will be
-used, and the data and number of tiles that will be downloaded.
-Requires the \code{usethis} package to be installed. By default, \code{FALSE} if not
-in an interactive (\code{interactive()}) session, TRUE if in an interactive
-session.}
-
 \item{debug}{Whether to show any errors that were received from the API.
 This package should handle errors gracefully in general, but if your basemap
 is not complete then you may wish to turn this on to see what errors there
@@ -81,11 +74,11 @@ A spatially-referenced raster, hopefully.
 Build a basemap from the Ordnance Survey Maps API
 }
 \examples{
-oxford <- create_bbox("Oxford", 27700)
-oxford_basemap <- build_basemap(oxford, zoom = 5, style = "road", crs = 27700)
+oxf <- create_bbox("Oxford", 27700)
+oxford_basemap <- build_basemap(oxf, zoom = 5, style = "road", crs = 27700)
 oxford_basemap
 
-tmap::tm_shape(basemap, raster.downsample = FALSE) +
+tmap::tm_shape(oxford_basemap, raster.downsample = FALSE) +
   tmap::tm_rgb(max.value = 1)
 
 }

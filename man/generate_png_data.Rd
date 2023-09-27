@@ -12,7 +12,6 @@ generate_png_data(
   squarify = TRUE,
   squarify_to = c("south", "east"),
   allow_premium = FALSE,
-  chatty = rlang::is_interactive(),
   debug = FALSE
 )
 }
@@ -57,12 +56,6 @@ you wish to access zoom levels within the "Premium" service tier (chargeable
 \itemize{
 \item see \url{https://osdatahub.os.uk/plans})
 }}
-
-\item{chatty}{Whether to provide a summary of the parameters that will be
-used, and the data and number of tiles that will be downloaded.
-Requires the \code{usethis} package to be installed. By default, \code{FALSE} if not
-in an interactive (\code{interactive()}) session, TRUE if in an interactive
-session.}
 
 \item{debug}{Whether to show any errors that were received from the API.
 This package should handle errors gracefully in general, but if your basemap

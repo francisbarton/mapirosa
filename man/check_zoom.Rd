@@ -8,8 +8,7 @@ check_zoom(
   zoom,
   style = c("outdoor", "road", "light", "leisure"),
   crs = c(27700, 3857),
-  allow_premium = FALSE,
-  chatty = rlang::is_interactive()
+  allow_premium = FALSE
 )
 }
 \arguments{
@@ -33,12 +32,6 @@ you wish to access zoom levels within the "Premium" service tier (chargeable
 \itemize{
 \item see \url{https://osdatahub.os.uk/plans})
 }}
-
-\item{chatty}{Whether to provide a summary of the parameters that will be
-used, and the data and number of tiles that will be downloaded.
-Requires the \code{usethis} package to be installed. By default, \code{FALSE} if not
-in an interactive (\code{interactive()}) session, TRUE if in an interactive
-session.}
 }
 \value{
 No visible return unless an error is thrown

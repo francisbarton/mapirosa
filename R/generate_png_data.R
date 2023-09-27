@@ -10,7 +10,6 @@ generate_png_data <- function(
     squarify = TRUE,
     squarify_to = c("south", "east"),
     allow_premium = FALSE,
-    chatty = rlang::is_interactive(),
     debug = FALSE
     ) {
 
@@ -27,11 +26,12 @@ generate_png_data <- function(
   # Run a quick check to make sure our zoom, style and CRS options
   # form a valid combination, and given whether we want to allow use of the
   # Premium (potentially chargeable) data tier
-  check_zoom(zoom = zoom,
-             style = style,
-             crs = crs,
-             allow_premium = allow_premium,
-             chatty = chatty)
+  check_zoom(
+    zoom = zoom,
+    style = style,
+    crs = crs,
+    allow_premium = allow_premium
+  )
 
 
 
@@ -110,7 +110,7 @@ generate_png_data <- function(
     y = seq(sqt[[3]], sqt[[4]]))
 
 
-  if (chatty) {
+  if (interactive()) {
     stopifnot(
       stringr::str_glue("This request will retrieve {nrow(grid)} tiles, weighing approximately {nrow(grid) * 1.5}MB in total. Proceed?") |>
         ui_yeah()

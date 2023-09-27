@@ -6,8 +6,7 @@ check_zoom <- function(
     zoom,
     style = c("outdoor", "road", "light", "leisure"),
     crs = c(27700, 3857),
-    allow_premium = FALSE,
-    chatty = rlang::is_interactive()
+    allow_premium = FALSE
     ) {
 
   tier <- "Free"
@@ -45,7 +44,7 @@ check_zoom <- function(
     if (zoom %in% 17:20) tier <- "Premium"
   }
 
-  if (chatty) {
+  if (rlang::is_interactive()) {
     ui_info(paste("Zoom level:", zoom))
     ui_info(paste("Map style:", stringr::str_to_sentence(style)))
     ui_info(paste("CRS:", crs))
