@@ -36,7 +36,6 @@ query_maps_api <- function(x, y, zoom, style, crs, user_agent = NULL) {
     resp_body_raw() # raw PNG data
 }
 
-#' @export
 safely_query_maps_api <- function(...) {
   purrr::safely(query_maps_api)(...)
 }
