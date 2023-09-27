@@ -22,7 +22,7 @@ Imports:
     terra,
     tidyr,
     usethis,
-    XML
+    xml2
 Suggests:
     janitor,
     osmdata,

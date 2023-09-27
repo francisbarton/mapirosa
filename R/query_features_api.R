@@ -1,8 +1,8 @@
 #' Retrieve data from the OS Features API
-#' 
+#'
 #' Function not yet completed and functional.
 #' See https://osdatahub.os.uk/docs/wfs/technicalSpecification for details.
-#' 
+#'
 #' @inheritParams query_names_api
 #' @param version character. API version. Most recent (2.0.0) by default.
 #'
@@ -36,13 +36,16 @@ query_features_api <- function(
 
     # convert API response to XML and return an R list object
     resp_body_xml(resp) |>
-      XML::xmlParse() |>
-      XML::xmlToList()
+      xml2::as_list() |>
+      purrr::pluck("WFS_Capabilities")
   }
 
   capabilities <- get_capabilities()
-  feature_types <- capabilities[["FeatureTypeList"]] |>
-    purrr::map_chr("Title")
+  feature_types <- capabilities |>
+    purrr::pluck("FeatureTypeList") |>
+    purrr::map("Title") |>
+    purrr::list_flatten() |>
+    purrr::list_c()
 
   return_feature_desc <- function() {}
 
