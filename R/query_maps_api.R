@@ -4,7 +4,7 @@
 #' @param x Tile number (horizontally)
 #' @param y Tile number (vertically)
 #' @param user_agent A User-Agent string to pass to the API
-#' 
+#'
 #' @returns Raw PNG data
 #' @export
 query_maps_api <- function(x, y, zoom, style, crs, user_agent = NULL) {
@@ -39,4 +39,8 @@ query_maps_api <- function(x, y, zoom, style, crs, user_agent = NULL) {
 #' @export
 safely_query_maps_api <- function(...) {
   purrr::safely(query_maps_api)(...)
+}
+
+possibly_query_maps_api <- function(...) {
+  purrr::possibly(query_maps_api)(...)
 }
