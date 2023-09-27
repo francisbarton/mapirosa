@@ -1,3 +1,12 @@
+# mapirosa 0.1.5 (27 September 2023)
+
+* Yikes it has been a long time
+* Rewritten some terra steps (set extent and crs) to adjust to changes in {terra}
+* Removed the `chatty` UI option
+* Fixed some @examples to pass the CMD check
+* Un-@exported a function that didn't need to be user-facing
+* Improved/fixed/wrote missing function param documentation
+
 # mapirosa 0.1.1 (10 December 2021)
 
 * Added area parameter handling to `names_api_query`
