@@ -1,5 +1,5 @@
 #' Retrieve data from the OS Names API
-#' 
+#'
 #' Only uses 'find' method currently, not 'nearest' yet.
 #' See https://osdatahub.os.uk/docs/names/technicalSpecification for details.
 #'
@@ -23,11 +23,12 @@
 #'
 #' places_vector <- c("Stroud", "Gloucester")
 #' places_vector |>
-#'   purrr::map(query_names_api, local_types = c("city", "town")) |>
-#'   httr2::resp_body_json() |>
-#'   purrr::pluck("results", 1)
-#'   ) |>
-#'   purrr::map_df(1) |>
+#'   purrr::map(\(x) query_names_api(x, local_types = c("city", "town"))) |>
+#'   purrr::map(httr2::resp_body_json) |>
+#'   purrr::map("results") |>
+#'   purrr::map(\(x) purrr::pluck(x, 1, 1)) |>
+#'   purrr::map(tibble::as_tibble_row) |>
+#'   purrr::list_rbind() |>
 #'   janitor::clean_names() |>
 #'   sf::st_as_sf(coords = c("geometry_x", "geometry_y"), crs = 27700)
 #' @export
