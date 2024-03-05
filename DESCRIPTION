@@ -1,14 +1,14 @@
 Package: mapirosa
 Title: Access OS OpenData APIs From R
-Version: 0.1.5
-Date: 2023-01-06
+Version: 0.1.6
+Date: 2024-03-04
 Authors@R: 
     person("Fran", "Barton", , "fbarton@alwaysdata.net", role = c("aut", "cre"))
 Description: A package to enable accessing basemap tiles from the [OS Maps API](https://osdatahub.os.uk/docs/wmts/overview), initially. Access to other OS (Ordnance Survey) Data Hub APIs may follow. The primary motivation for this project was to find a map tile service that supplies tiles in the British National Grid (27700) CRS, unlike the usual web mapping standard CRS of 3857. The name of the package is an intentional corruption of the Spanish word mariposa 🦋.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Imports: 
     assertthat,
     dplyr (>= 1.0.0),
@@ -31,4 +31,4 @@ Suggests:
     tmap
 Config/testthat/edition: 3
 Depends: 
-    R (>= 4.0.0)
+    R (>= 4.1.0)

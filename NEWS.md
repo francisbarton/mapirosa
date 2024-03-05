@@ -1,3 +1,8 @@
+# mapirosa 0.1.6 (4 March 2024)
+
+* Long-awaited update to `query_names_api()` that puts the httr2 query step into a sub-function (`names_query`) and uses `map` to vectorise over multiple place names.
+* Also uses `purrr::safely()` to handle errors better.
+
 # mapirosa 0.1.5 (27 September 2023)
 
 * Yikes it has been a long time

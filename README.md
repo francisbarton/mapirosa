@@ -38,7 +38,6 @@ if (requireNamespace("osmdata")) {
       xmax = 457014.2,
       ymax = 211088.8)
 }
-#> Loading required namespace: osmdata
 
 oxford_basemap <- build_basemap(
   bbox = oxford,
@@ -63,7 +62,6 @@ if (requireNamespace("tmap")) {
   tmap::tm_shape(oxford_basemap, raster.downsample = FALSE) +
     tmap::tm_rgb(max.value = 1)
 }
-#> Loading required namespace: tmap
 ```
 
 <img src="man/figures/README-examples-1.png" width="100%" />
@@ -109,13 +107,7 @@ if (requireNamespace("ggplot2") & requireNamespace("tidyterra")) {
     ggplot2::coord_sf() +
     ggplot2::theme_void()
 }
-#> Loading required namespace: ggplot2
-#> Loading required namespace: tidyterra
-#> ── Attaching packages ─────────────────────────────────────── tidyterra 0.2.0 ──
-#> 
-#> Suppress this startup message by setting Sys.setenv(tidyterra.quiet = TRUE)
-#> ✔ tibble 3.1.8     ✔ dplyr  1.0.9
-#> ✔ tidyr  1.2.0
+
 ```
 
 <img src="man/figures/README-examples-2.png" width="100%" />
