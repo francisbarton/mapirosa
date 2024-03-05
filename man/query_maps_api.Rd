@@ -17,9 +17,6 @@ combinations of zoom level and style retrieve tiles from the OS's Premium
 service, which can generate a financial charge once past a certain level of
 usage. See the OS Maps API webpages for details.}
 
-\item{style}{Map style, a string. One of "road", "outdoor", "light",
-"leisure". Leisure is only available in the 27700 CRS.}
-
 \item{crs}{CRS code (EPSG), an integer, either \code{27700} (British National
 Grid) or \code{3857} (standard web mapping projected coordinate system eg Google
 Maps, OSM).}

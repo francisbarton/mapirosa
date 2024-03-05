@@ -7,10 +7,11 @@
 generate_png_data(
   bbox,
   zoom,
+  crs,
   style = c("outdoor", "road", "light", "leisure"),
-  crs = c(27700, 3857),
   squarify = TRUE,
   squarify_to = c("south", "east"),
+  cache_tiles = FALSE,
   allow_premium = FALSE,
   debug = FALSE
 )
@@ -25,12 +26,12 @@ combinations of zoom level and style retrieve tiles from the OS's Premium
 service, which can generate a financial charge once past a certain level of
 usage. See the OS Maps API webpages for details.}
 
-\item{style}{Map style, a string. One of "road", "outdoor", "light",
-"leisure". Leisure is only available in the 27700 CRS.}
-
 \item{crs}{CRS code (EPSG), an integer, either \code{27700} (British National
 Grid) or \code{3857} (standard web mapping projected coordinate system eg Google
 Maps, OSM).}
+
+\item{style}{Map style, a string. One of "road", "outdoor", "light",
+"leisure". Leisure is only available in the 27700 CRS.}
 
 \item{squarify}{Whether to add rows/columns to a basemap to make it square.
 \code{TRUE} by default. If a bbox covers a set of basemap tiles that is wider
@@ -48,6 +49,10 @@ will add rows or columns, then enter a vector of length 2, e.g.
 \code{c("north", "west")} depending on your preferences. Note that if 5 rows are
 added, 3 will be added to your preferred direction, and 2 to the other side;
 this parameter does not force all 5 rows to be added to your preferred side!}
+
+\item{cache_tiles}{Instead of converting PNG data from the API into a
+basemap on the fly, cache data as local PNG files. Not functional yet;
+hence set to \code{FALSE}.}
 
 \item{allow_premium}{Whether to only access tiles from zoom levels that are
 within the "OpenData" tier of the OS API. These vary according to map style

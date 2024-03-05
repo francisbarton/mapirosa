@@ -18,20 +18,9 @@ combinations of zoom level and style retrieve tiles from the OS's Premium
 service, which can generate a financial charge once past a certain level of
 usage. See the OS Maps API webpages for details.}
 
-\item{style}{Map style, a string. One of "road", "outdoor", "light",
-"leisure". Leisure is only available in the 27700 CRS.}
-
 \item{crs}{CRS code (EPSG), an integer, either \code{27700} (British National
 Grid) or \code{3857} (standard web mapping projected coordinate system eg Google
 Maps, OSM).}
-
-\item{allow_premium}{Whether to only access tiles from zoom levels that are
-within the "OpenData" tier of the OS API. These vary according to map style
-and CRS. See the \href{https://osdatahub.os.uk/docs/wmts/technicalSpecification}{API Technical Specification} for details. Defaults to FALSE. Set to TRUE if
-you wish to access zoom levels within the "Premium" service tier (chargeable
-\itemize{
-\item see \url{https://osdatahub.os.uk/plans})
-}}
 }
 \value{
 No visible return unless an error is thrown
