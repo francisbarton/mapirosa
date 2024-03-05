@@ -80,7 +80,7 @@ generate_png_data <- function(
     # 40097932 = width / height of EPSG:3857 map in m
     #
     # To make things work here, we take the mean of these two numbers,
-    # and we don't ask any difficult questions about why this works.
+    # and we don't ask any awkward questions about why this works.
     equator <- mean(c(40052753, 40097932))
 
     tile_size <- equator / 2^zoom
@@ -111,13 +111,15 @@ generate_png_data <- function(
 
 
   if (interactive()) {
-    stopifnot(
-      stringr::str_glue("This request will retrieve {nrow(grid)} tiles, weighing approximately {nrow(grid) * 1.5}MB in total. Proceed?") |>
-        ui_yeah()
-    )
+    if (ui_yeah(c(
+        "This request will retrieve {nrow(grid)} tiles, weighing approximately",
+        "{nrow(grid) * 1.5}MB in total. Proceed?"
+      ))) {
+      invisible(TRUE)
+    } else {
+      return(invisible(TRUE))
+    }
   }
-
-
 
 
   # Use data grid and API query function to retrieve PNG data ---------------
@@ -151,7 +153,7 @@ generate_png_data <- function(
 
   if (length(success) < nrow(grid)) {
     stringr::str_glue("{length(success)} of {nrow(grid)} tiles retrieved.") |>
-  ui_info()
+      ui_info()
   }
 
 
@@ -173,10 +175,10 @@ generate_png_data <- function(
 
 
   tile_extents <- grid |>
-    dplyr::mutate(xmin = (tile_size * .data$x) + left_edge, .keep = "unused") |>
-    dplyr::mutate(xmax = .data$xmin + tile_size) |>
-    dplyr::mutate(ymin = top_edge - (tile_size * (.data$y + 1)), .keep = "unused") |>
-    dplyr::mutate(ymax = .data$ymin + tile_size) |>
+    dplyr::mutate(xmin = (tile_size * .data[["x"]]) + left_edge, .keep = "unused") |>
+    dplyr::mutate(xmax = .data[["xmin"]] + tile_size) |>
+    dplyr::mutate(ymin = top_edge - (tile_size * (.data[["y"]] + 1)), .keep = "unused") |>
+    dplyr::mutate(ymax = .data[["ymin"]] + tile_size) |>
     dplyr::rowwise() |>
     dplyr::group_split() |>
     # purrr::map(as.vector) |>
