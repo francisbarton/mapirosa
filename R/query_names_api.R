@@ -17,10 +17,8 @@
 #' @param user_agent character. `NULL` by default, which will use the package
 #'  name.
 #'
-#' @returns A raw response from the API endpoint - you will want to process
-#'  this.
+#' @returns An sfc geospatial tibble
 #' @examples
-#' # Example of how to use function and process API response
 #'
 #' query_names_api(c("Stroud", "Gloucester"))
 #' @export
@@ -108,8 +106,8 @@ names_query <- function(x, ...) {
   # https://osdatahub.os.uk/docs/names/technicalSpecification
   # for details
 
-  # TODO implement proper process for key mgmt/user supply via {httr2} in time
-  # this will to do for now...
+  # TODO implement proper process for key mgmt/user supply via {httr2}.
+  # This will to do for now...
   os_data_key <- Sys.getenv("OS_DATA_KEY")
 
   os_base_url <- "https://api.os.uk/search/names/v1/find"

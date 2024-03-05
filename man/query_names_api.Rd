@@ -6,9 +6,9 @@
 \usage{
 query_names_api(
   x,
-  max_results = 1,
-  area = NULL,
   local_types = NULL,
+  bounds = NULL,
+  max_results = 1L,
   user_agent = NULL
 )
 }
@@ -17,38 +17,28 @@ query_names_api(
 docs say 'A free string text search of OS Names, intended to be an
 ambiguous/fuzzy search.'}
 
-\item{max_results}{integer. How many results to return. Can be from 1-100.
-Set to 1 by default.}
-
-\item{area}{bbox. The bounding box of an area to limit search to. \code{NULL} by
-default - no filtering by area.}
-
 \item{local_types}{character vector. Types of result to return. Examples are:
 'City', 'Village'. See API docs for all options. \code{NULL} by default (= no
 filtering by type).}
+
+\item{bounds}{bbox. The bounding box of an area to limit search to. \code{NULL} by
+default - no filtering by area. Can be supplied as a vector of 4 numerics,
+in the following XMIN,YMIN,XMAX,YMAX form: c(414000, 114000, 414100, 114100)}
+
+\item{max_results}{integer. How many results to return. Can be from 1-100.
+Set to 1 by default.}
 
 \item{user_agent}{character. \code{NULL} by default, which will use the package
 name.}
 }
 \value{
-A raw response from the API endpoint - you will want to process
-this.
+An sfc geospatial tibble
 }
 \description{
 Only uses 'find' method currently, not 'nearest' yet.
 See https://osdatahub.os.uk/docs/names/technicalSpecification for details.
 }
 \examples{
-# Example of how to use function and process API response
 
-places_vector <- c("Stroud", "Gloucester")
-places_vector |>
-  purrr::map(\(x) query_names_api(x, local_types = c("city", "town"))) |>
-  purrr::map(httr2::resp_body_json) |>
-  purrr::map("results") |>
-  purrr::map(\(x) purrr::pluck(x, 1, 1)) |>
-  purrr::map(tibble::as_tibble_row) |>
-  purrr::list_rbind() |>
-  janitor::clean_names() |>
-  sf::st_as_sf(coords = c("geometry_x", "geometry_y"), crs = 27700)
+query_names_api(c("Stroud", "Gloucester"))
 }
