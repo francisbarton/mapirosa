@@ -23,11 +23,12 @@
 #' query_names_api(c("Stroud", "Gloucester"))
 #' @export
 query_names_api <- function(
-    x,
-    local_types = NULL,
-    bounds = NULL,
-    max_results = 1L,
-    user_agent = NULL) {
+  x,
+  local_types = NULL,
+  bounds = NULL,
+  max_results = 1L,
+  user_agent = NULL
+) {
 
   assert_that(is.character(x))
   assert_that(max_results %in% seq(100L))
@@ -49,18 +50,18 @@ query_names_api <- function(
   if (!is.null(bounds)) {
     # if area is not already a vector then assume it is an sf object,
     # check its CRS is 27700 (or convert if not) and get its bbox
-    if (!rlang::is_vector(bounds, n = 4)) {
+    if (!rlang::is_vector(bounds, n = 4L)) {
       bounds <- bounds |>
         sf::st_transform(27700) |>
         sf::st_bbox()
     }
 
-    # if bounds was already passed in as a bbox or other vector
-    # then just collapse it with commas (doesn't check if coords are in 27700)
+    # If bounds was already passed in as a bbox - or any other numeric vector -
+    # just collapse it with commas (this doesn't check if coords are in 27700)
     bounds <- round(bounds, 2L) # API requires 2dp max.
     bounds <- stringr::str_flatten(bounds, collapse = ",")
   }
-  assert_that(is.character(bounds))
+ 
 
   default_ua <- "mapirosa R package https://github.com/francisbarton/mapirosa"
   user_agent <- ifelse(is.null(user_agent), default_ua, user_agent)
@@ -79,14 +80,15 @@ query_names_api <- function(
     purrr::map(\(x) snq(x, !!!args))
 
   errs <- purrr::map(res, "error") |> purrr::compact()
-  ui_info("{length(errs)} errors occurred")
+  if (length(errs) > 0) ui_info("{length(errs)} errors occurred")
 
   res |>
     purrr::map("result") |>
     purrr::compact() |>
-    purrr::map(httr2::resp_body_json) |>
+    purrr::map(resp_body_json) |>
     purrr::map("results") |>
-    purrr::map(\(x) purrr::pluck(x, 1L, 1L)) |>
+    purrr::map(\(x) purrr::map(x, \(x) purrr::pluck(x, "GAZETTEER_ENTRY"))) |>
+    purrr::list_flatten() |>
     purrr::map(tibble::as_tibble_row) |>
     purrr::list_rbind() |>
     janitor::clean_names() |>
@@ -102,10 +104,6 @@ names_query <- function(x, ...) {
 
   args <- rlang::list2(...)
 
-  # OS Names API. See
-  # https://osdatahub.os.uk/docs/names/technicalSpecification
-  # for details
-
   # TODO implement proper process for key mgmt/user supply via {httr2}.
   # This will to do for now...
   os_data_key <- Sys.getenv("OS_DATA_KEY")
@@ -115,8 +113,8 @@ names_query <- function(x, ...) {
   request(os_base_url) |>
     req_url_query(key = os_data_key) |>
     req_url_query(query = x) |>
-    req_url_query(maxresults = args[["max_results"]]) |>
     req_url_query(bounds = args[["bounds"]]) |>
+    req_url_query(maxresults = args[["max_results"]]) |>
     req_url_query(fq = args[["local_types"]]) |>
     req_user_agent(args[["user_agent"]]) |>
     req_perform()

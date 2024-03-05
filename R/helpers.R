@@ -10,5 +10,3 @@ create_bbox <- function(place, crs) {
     sf::st_transform(crs = crs) |>
     sf::st_bbox()
 }
-
-
